@@ -39,6 +39,22 @@
           </p>
         </div>
       </div>
+
+      <div class="absolute bottom-0 m-6 bg-white">
+        <a
+          href="https://olivier-recher.com"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="mx-auto flex items-center gap-2 text-sm border-gray-200 hover:text-gray-800 transition-colors border-2 p-2 rounded-md"
+          aria-label="Open Olivier Recher website in a new tab"
+        >
+          <span class="text-xs text-gray-400">created by</span>
+          <span class="font-medium text-gray-700">Olivier Recher</span>
+          <svg class="w-3 h-3 text-gray-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 3h7m0 0v7m0-7L10 14" />
+          </svg>
+        </a>
+      </div>
     </div>
 
     <!-- Main Content -->
