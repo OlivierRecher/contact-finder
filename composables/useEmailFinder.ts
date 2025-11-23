@@ -77,9 +77,9 @@ export const useEmailFinder = () => {
       // Multiple search strategies
       const queries = [
         `"${name}" "${company}" email`,
-        `"${name}" "${company}" contact`,
-        `"${name}" "${role}" "${company}" "@"`,
-        `"${name}" "${company}" mailto:`
+        // `"${name}" "${company}" contact`, --- IGNORE ---
+        // `"${name}" "${role}" "${company}" "@"`, --- IGNORE ---
+        // `"${name}" "${company}" mailto:` --- IGNORE ---
       ]
 
       const allEmails: EmailSearchResult[] = []
@@ -182,7 +182,7 @@ export const useEmailFinder = () => {
           'Content-Type': 'application/json'
         },
         body: {
-          q: `"${name}" "${company}" (email OR contact) site:twitter.com OR site:x.com`,
+          q: `"${name}" "${company}" (email OR contact) site:x.com`,
           num: 3
         }
       })
@@ -218,12 +218,19 @@ export const useEmailFinder = () => {
   ): Promise<string> => {
     try {
       // Run all searches in parallel for better performance
-      const [companyResults, googleResults, githubResults, twitterResults] = await Promise.all([
-        searchEmailOnCompanyWebsite(name, company, apiKey),
-        searchEmailOnGoogle(name, company, role, apiKey),
-        searchEmailOnGitHub(name, company, apiKey),
-        searchEmailOnTwitter(name, company, apiKey)
-      ])
+      const [
+        companyResults,
+        googleResults,
+        githubResults,
+        twitterResults
+      ] = await Promise.all(
+        [
+          searchEmailOnCompanyWebsite(name, company, apiKey),
+          searchEmailOnGoogle(name, company, role, apiKey),
+          searchEmailOnGitHub(name, company, apiKey),
+          searchEmailOnTwitter(name, company, apiKey)
+        ]
+      )
 
       // Combine all results
       const allResults = [
