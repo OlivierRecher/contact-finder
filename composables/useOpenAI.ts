@@ -41,9 +41,9 @@ const fetchWithRetry = async (
     } catch (error: any) {
       const statusCode = error?.statusCode || error?.status || error?.response?.status
       
-      // Erreur 429 - Rate limit
+      // Error 429 - Rate limit
       if (statusCode === 429) {
-        // Essayer d'extraire retry-after de différentes façons selon la structure de l'erreur
+        // Try to extract retry-after in different ways depending on error structure
         let retryAfter: number
         if (error?.response?.headers?.['retry-after']) {
           retryAfter = parseInt(error.response.headers['retry-after'])
@@ -54,50 +54,50 @@ const fetchWithRetry = async (
         } else if (error?.headers?.['Retry-After']) {
           retryAfter = parseInt(error.headers['Retry-After'])
         } else {
-          // Backoff exponentiel par défaut
+          // Default exponential backoff
           retryAfter = Math.pow(2, attempt) * baseDelay / 1000
         }
         
         if (attempt < maxRetries - 1) {
           const delayMs = retryAfter * 1000
-          console.log(`Rate limit atteint. Nouvelle tentative dans ${retryAfter}s...`)
+          console.log(`Rate limit reached. Retrying in ${retryAfter}s...`)
           await sleep(delayMs)
           continue
         } else {
           throw new OpenAIError(
-            `Limite de requêtes atteinte. Veuillez patienter ${retryAfter} secondes avant de réessayer.`,
+            `Rate limit reached. Please wait ${retryAfter} seconds before trying again.`,
             429,
             retryAfter
           )
         }
       }
       
-      // Erreur 401 - Clé API invalide
+      // Error 401 - Invalid API key
       if (statusCode === 401) {
-        throw new OpenAIError('Clé API OpenAI invalide. Veuillez vérifier votre clé dans la configuration.', 401)
+        throw new OpenAIError('Invalid OpenAI API key. Please check your key in the configuration.', 401)
       }
       
-      // Erreur 500 - Erreur serveur
+      // Error 500 - Server error
       if (statusCode >= 500) {
         if (attempt < maxRetries - 1) {
           const delayMs = Math.pow(2, attempt) * baseDelay
-          console.log(`Erreur serveur. Nouvelle tentative dans ${delayMs}ms...`)
+          console.log(`Server error. Retrying in ${delayMs}ms...`)
           await sleep(delayMs)
           continue
         } else {
-          throw new OpenAIError('Erreur serveur OpenAI. Veuillez réessayer plus tard.', statusCode)
+          throw new OpenAIError('OpenAI server error. Please try again later.', statusCode)
         }
       }
       
-      // Autres erreurs
+      // Other errors
       throw new OpenAIError(
-        error?.message || error?.data?.message || 'Une erreur est survenue avec l\'API OpenAI.',
+        error?.message || error?.data?.message || 'An error occurred with the OpenAI API.',
         statusCode
       )
     }
   }
   
-  throw new OpenAIError('Échec après plusieurs tentatives.')
+  throw new OpenAIError('Failed after multiple attempts.')
 }
 
 export const useOpenAI = () => {
@@ -112,22 +112,22 @@ export const useOpenAI = () => {
       .join('\n')
 
     const prompt = `
-Tu es un expert en recrutement. Voici une liste de résultats de recherche LinkedIn pour une personne cherchant le poste de '${targetRole}'.
-Fiche de poste (contexte): ${jobDesc || 'Non fournie'}
+You are a recruitment expert. Here is a list of LinkedIn search results for someone looking for the position of '${targetRole}'.
+Job description (context): ${jobDesc || 'Not provided'}
 
-Analyse chaque profil et retourne une liste JSON stricte. Pour chaque profil, identifie :
-1. Le Nom (extrait du titre).
-2. Le Rôle actuel.
-3. Le "Potential Score" (0-100) : Probabilité que cette personne puisse m'embaucher ou me faire passer un entretien.
-4. Le "Type" : "Hiring Manager" (le chef potentiel), "Recruiter" (RH), "Peer" (Collègue), ou "Irrelevant".
-5. Une "Raison" courte (une phrase) expliquant pourquoi ce contact est pertinent.
-6. L'adresse email (si disponible dans le snippet, sinon laisse vide "").
-7. Le LinkedIn URL.
+Analyze each profile and return a strict JSON list. For each profile, identify:
+1. The Name (extracted from the title).
+2. The Current Role.
+3. The "Potential Score" (0-100): Probability that this person could hire me or get me an interview.
+4. The "Type": "Hiring Manager" (potential boss), "Recruiter" (HR), "Peer" (Colleague), or "Irrelevant".
+5. A short "Reason" (one sentence) explaining why this contact is relevant.
+6. The email address (if available in the snippet, otherwise leave empty "").
+7. The LinkedIn URL.
 
-Voici les profils :
+Here are the profiles:
 ${profilesText}
 
-Réponds UNIQUEMENT avec le tableau JSON (pas de markdown, pas de texte avant/après).
+Respond ONLY with the JSON array (no markdown, no text before/after).
 Format: [{"id": 0, "name": "...", "role": "...", "score": 80, "type": "...", "reason": "...", "link": "...", "email": "..."}]
 `
 
@@ -143,7 +143,7 @@ Format: [{"id": 0, "name": "...", "role": "...", "score": 80, "type": "...", "re
           body: {
             model: 'gpt-4o',
             messages: [
-              { role: 'system', content: 'Tu es un assistant JSON utile.' },
+              { role: 'system', content: 'You are a helpful JSON assistant.' },
               { role: 'user', content: prompt }
             ],
             temperature: 0
@@ -155,7 +155,7 @@ Format: [{"id": 0, "name": "...", "role": "...", "score": 80, "type": "...", "re
       const cleanedContent = content.replace(/```json/g, '').replace(/```/g, '').trim()
       return JSON.parse(cleanedContent) as AnalyzedContact[]
     } catch (error) {
-      console.error('Erreur d\'analyse OpenAI:', error)
+      console.error('OpenAI analysis error:', error)
       throw error
     }
   }
@@ -167,19 +167,19 @@ Format: [{"id": 0, "name": "...", "role": "...", "score": 80, "type": "...", "re
     apiKey: string
   ): Promise<string> => {
     const prompt = `
-Rédige un message de connexion LinkedIn (max 300 caractères) et un Email froid (court) pour ce contact.
+Draft a LinkedIn connection message (max 300 characters) and a short cold email for this contact.
 
-Moi : Je cherche un poste de ${targetRole}.
-Mon contexte : ${userCvContext}
+Me: I'm looking for a position as ${targetRole}.
+My context: ${userCvContext}
 
-Cible :
-Nom : ${contactInfo.name}
-Rôle : ${contactInfo.role}
-Type : ${contactInfo.type}
+Target:
+Name: ${contactInfo.name}
+Role: ${contactInfo.role}
+Type: ${contactInfo.type}
 
-Le ton doit être professionnel, direct mais chaleureux. Ne sois pas "spammy".
-Si c'est un Hiring Manager, parle de résoudre ses problèmes.
-Si c'est un Recruiter, parle de correspondance au profil.
+The tone should be professional, direct but warm. Don't be "spammy".
+If it's a Hiring Manager, talk about solving their problems.
+If it's a Recruiter, talk about profile match.
 `
 
     try {
@@ -202,7 +202,7 @@ Si c'est un Recruiter, parle de correspondance au profil.
 
       return (response as any).choices[0].message.content
     } catch (error) {
-      console.error('Erreur de génération de message:', error)
+      console.error('Message generation error:', error)
       throw error
     }
   }

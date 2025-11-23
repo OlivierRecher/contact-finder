@@ -1,6 +1,6 @@
 <template>
   <div class="min-h-screen bg-gray-50">
-    <!-- Sidebar pour les clés API -->
+    <!-- API Keys Sidebar -->
     <div class="fixed inset-y-0 left-0 w-64 bg-white shadow-lg z-10 overflow-y-auto">
       <div class="p-6">
         <h2 class="text-xl font-bold text-gray-800 mb-6">🔑 Configuration</h2>
@@ -8,7 +8,7 @@
         <div class="space-y-4">
           <div>
             <label class="block text-sm font-medium text-gray-700 mb-2">
-              Clé API OpenAI
+              OpenAI API Key
             </label>
             <input
               v-model="openaiApiKey"
@@ -21,12 +21,12 @@
           
           <div>
             <label class="block text-sm font-medium text-gray-700 mb-2">
-              Clé API Serper.dev
+              Serper.dev API Key
             </label>
             <input
               v-model="serperApiKey"
               type="password"
-              placeholder="Votre clé Serper"
+              placeholder="Your Serper key"
               class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
               @input="saveSerperKey"
             />
@@ -35,49 +35,49 @@
         
         <div class="mt-6 p-3 bg-blue-50 rounded-md">
           <p class="text-xs text-blue-800">
-            Nécessaire pour scanner le web et analyser les profils.
+            Required to scan the web and analyze profiles.
           </p>
         </div>
       </div>
     </div>
 
-    <!-- Contenu principal -->
+    <!-- Main Content -->
     <div class="ml-64">
       <div class="max-w-7xl mx-auto px-8 py-12">
         <!-- Header -->
         <div class="mb-8">
           <h1 class="text-4xl font-bold text-gray-900 mb-3">
-            🎯 Recruiter Hunter AI : Trouvez votre futur patron
+            🎯 Recruiter Hunter AI: Find Your Future Boss
           </h1>
           <p class="text-gray-600 text-lg">
-            Cette application utilise l'IA pour identifier les contacts clés dans une entreprise cible 
-            et rédiger vos messages d'approche.
+            This application uses AI to identify key contacts in a target company 
+            and draft your outreach messages.
           </p>
         </div>
 
-        <!-- Formulaire de recherche -->
+        <!-- Search Form -->
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
-          <!-- Colonne gauche -->
+          <!-- Left Column -->
           <div class="space-y-6">
             <div>
-              <h2 class="text-2xl font-semibold text-gray-800 mb-4">1. Définir la cible</h2>
+              <h2 class="text-2xl font-semibold text-gray-800 mb-4">1. Define Your Target</h2>
               
               <div class="space-y-4">
                 <div>
                   <label class="block text-sm font-medium text-gray-700 mb-2">
-                    Poste visé
+                    Target Position
                   </label>
                   <input
                     v-model="targetRole"
                     type="text"
-                    placeholder="Chef de Projet Digital"
+                    placeholder="Digital Project Manager"
                     class="w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                   />
                 </div>
                 
                 <div>
                   <label class="block text-sm font-medium text-gray-700 mb-2">
-                    Entreprise cible
+                    Target Company
                   </label>
                   <input
                     v-model="targetCompany"
@@ -89,12 +89,12 @@
                 
                 <div>
                   <label class="block text-sm font-medium text-gray-700 mb-2">
-                    Description du poste (optionnel)
+                    Job Description (optional)
                   </label>
                   <textarea
                     v-model="jobDescription"
                     rows="4"
-                    placeholder="Copiez/Collez la description du poste..."
+                    placeholder="Copy/Paste the job description..."
                     class="w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                   />
                 </div>
@@ -102,16 +102,16 @@
             </div>
 
             <div>
-              <h2 class="text-2xl font-semibold text-gray-800 mb-4">2. Votre Profil (pour l'IA)</h2>
+              <h2 class="text-2xl font-semibold text-gray-800 mb-4">2. Your Profile (for AI)</h2>
               
               <div>
                 <label class="block text-sm font-medium text-gray-700 mb-2">
-                  Vos points forts / Résumé CV
+                  Your Strengths / CV Summary
                 </label>
                 <textarea
                   v-model="userContext"
                   rows="3"
-                  placeholder="5 ans d'expérience, expert en agile, bilingue anglais."
+                  placeholder="5 years of experience, agile expert, bilingual English."
                   class="w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                 />
               </div>
@@ -124,7 +124,7 @@
             >
               <span v-if="isLoading" class="animate-spin">⏳</span>
               <span v-else>🔍</span>
-              {{ isLoading ? 'Recherche en cours...' : 'Lancer la recherche' }}
+              {{ isLoading ? 'Searching...' : 'Launch Search' }}
             </button>
 
             <div v-if="error" class="p-4 rounded-md" :class="error.includes('⏱️') ? 'bg-yellow-50 border border-yellow-200' : 'bg-red-50 border border-red-200'">
@@ -132,15 +132,15 @@
                 {{ error }}
               </p>
               <p v-if="error.includes('⏱️')" class="text-xs text-yellow-700 mt-2">
-                💡 Astuce : Les limites de taux sont basées sur votre plan OpenAI. Vous pouvez attendre quelques instants ou mettre à niveau votre plan.
+                💡 Tip: Rate limits are based on your OpenAI plan. You can wait a few moments or upgrade your plan.
               </p>
             </div>
           </div>
 
-          <!-- Colonne droite - Résultats -->
+          <!-- Right Column - Results -->
           <div v-if="contacts.length > 0" class="space-y-6">
             <div>
-              <h2 class="text-2xl font-semibold text-gray-800 mb-4">3. Contacts Identifiés</h2>
+              <h2 class="text-2xl font-semibold text-gray-800 mb-4">3. Identified Contacts</h2>
               
               <div class="space-y-4 max-h-[600px] overflow-y-auto">
                 <div
@@ -161,7 +161,7 @@
                         rel="noopener noreferrer"
                         class="text-blue-600 hover:text-blue-800 text-sm font-medium"
                       >
-                        Voir le profil LinkedIn →
+                        View LinkedIn Profile →
                       </a>
                     </div>
                     
@@ -184,7 +184,7 @@
                     :disabled="isGenerating"
                     class="w-full mt-4 bg-gray-100 text-gray-700 px-4 py-2 rounded-md font-medium hover:bg-gray-200 disabled:bg-gray-50 disabled:text-gray-400 transition-colors"
                   >
-                    ✉️ Rédiger un message
+                    ✉️ Draft Message
                   </button>
                 </div>
               </div>
@@ -192,16 +192,16 @@
           </div>
         </div>
 
-        <!-- Génération de message -->
+        <!-- Message Generation -->
         <div v-if="selectedContact && draftMessage" class="mt-8">
           <div class="bg-white border border-gray-200 rounded-lg p-6 shadow-sm">
             <h2 class="text-2xl font-semibold text-gray-800 mb-4">
-              4. Brouillon pour {{ selectedContact.name }}
+              4. Draft for {{ selectedContact.name }}
             </h2>
             
             <div class="mb-4">
               <label class="block text-sm font-medium text-gray-700 mb-2">
-                Message suggéré (Copiable)
+                Suggested Message (Copyable)
               </label>
               <textarea
                 :value="draftMessage"
@@ -215,7 +215,7 @@
               @click="copyToClipboard"
               class="bg-green-600 text-white px-6 py-2 rounded-md font-semibold hover:bg-green-700 transition-colors"
             >
-              📋 Copier dans le presse-papier
+              📋 Copy to Clipboard
             </button>
           </div>
         </div>
@@ -247,10 +247,10 @@ const { analyzeProfiles, draftMessage: generateDraftMessage } = useOpenAI()
 
 const openaiApiKey = ref('')
 const serperApiKey = ref('')
-const targetRole = ref('Chef de Projet Digital')
+const targetRole = ref('Digital Project Manager')
 const targetCompany = ref("L'Oréal")
 const jobDescription = ref('')
-const userContext = ref('5 ans d\'expérience, expert en agile, bilingue anglais.')
+const userContext = ref('5 years of experience, agile expert, bilingual English.')
 const contacts = ref<AnalyzedContact[]>([])
 const selectedContact = ref<AnalyzedContact | null>(null)
 const draftMessage = ref('')
@@ -288,7 +288,7 @@ const saveSerperKey = () => {
 
 const handleSearch = async () => {
   if (!canSearch.value) {
-    error.value = 'Veuillez entrer vos clés API dans la barre latérale pour commencer.'
+    error.value = 'Please enter your API keys in the sidebar to begin.'
     return
   }
 
@@ -299,16 +299,16 @@ const handleSearch = async () => {
   draftMessage.value = ''
 
   try {
-    // 1. Recherche des profils
+    // 1. Search profiles
     const rawResults = await searchProfiles(targetCompany.value, targetRole.value, serperApiKey.value)
     
     if (!rawResults || rawResults.length === 0) {
-      error.value = 'Aucun résultat trouvé. Essayez de changer le nom de l\'entreprise.'
+      error.value = 'No results found. Try changing the company name.'
       isLoading.value = false
       return
     }
 
-    // 2. Analyse IA
+    // 2. AI Analysis
     const analyzed = await analyzeProfiles(
       rawResults,
       targetRole.value,
@@ -320,12 +320,12 @@ const handleSearch = async () => {
   } catch (err: any) {
     if (err instanceof OpenAIError) {
       if (err.statusCode === 429 && err.retryAfter) {
-        error.value = `⏱️ Limite de requêtes atteinte. Veuillez patienter ${err.retryAfter} secondes avant de réessayer.`
+        error.value = `⏱️ Rate limit reached. Please wait ${err.retryAfter} seconds before trying again.`
       } else {
         error.value = `❌ ${err.message}`
       }
     } else {
-      error.value = err.message || 'Une erreur est survenue lors de la recherche.'
+      error.value = err.message || 'An error occurred during the search.'
     }
     console.error(err)
   } finally {
@@ -349,12 +349,12 @@ const generateMessage = async (contact: AnalyzedContact) => {
   } catch (err: any) {
     if (err instanceof OpenAIError) {
       if (err.statusCode === 429 && err.retryAfter) {
-        error.value = `⏱️ Limite de requêtes atteinte. Veuillez patienter ${err.retryAfter} secondes avant de réessayer.`
+        error.value = `⏱️ Rate limit reached. Please wait ${err.retryAfter} seconds before trying again.`
       } else {
         error.value = `❌ ${err.message}`
       }
     } else {
-      error.value = err.message || 'Une erreur est survenue lors de la génération du message.'
+      error.value = err.message || 'An error occurred while generating the message.'
     }
     console.error(err)
   } finally {
@@ -366,9 +366,9 @@ const copyToClipboard = async () => {
   if (draftMessage.value) {
     try {
       await navigator.clipboard.writeText(draftMessage.value)
-      alert('Message copié dans le presse-papier !')
+      alert('Message copied to clipboard!')
     } catch (err) {
-      console.error('Erreur lors de la copie:', err)
+      console.error('Error copying to clipboard:', err)
     }
   }
 }

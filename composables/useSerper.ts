@@ -21,7 +21,7 @@ export const useSerper = () => {
 
       return (response as any).organic || []
     } catch (error) {
-      console.error('Erreur de recherche Serper:', error)
+      console.error('Serper search error:', error)
       throw error
     }
   }

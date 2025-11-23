@@ -6,7 +6,7 @@ export default defineNuxtConfig({
   css: ['~/assets/css/main.css'],
   runtimeConfig: {
     public: {
-      // Les clés API seront gérées côté client via localStorage
+      // API keys will be managed client-side via localStorage
     }
   }
 })
